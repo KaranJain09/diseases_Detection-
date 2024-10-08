@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disease Detection System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: url('https://plus.unsplash.com/premium_photo-1673953509975-576678fa6710?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aGVhbHRoY2FyZXxlbnwwfHwwfHx8MA%3D%3D') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 24px;
+            color: #f9d342 !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: white !important;
+            font-size: 18px;
+            margin-left: 15px;
+        }
+
+        /* Unified Header/Main Section */
+        .main-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 40px;
+        }
+
+        .main-section h1 {
+            font-size: 4rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+            margin-bottom: 40px;
+        }
+
+        /* Upload Cards */
+        .card-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            border: none;
+            border-radius: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card img {
+            height: 250px;
+            object-fit: cover;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .card h5 {
+            font-size: 1.5rem;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        /* Button Styling */
+        .btn-primary {
+            background-color: #f9d342;
+            border: none;
+            color: #343a40;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #ffcc00;
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 50px 0;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        .feature-icon {
+            font-size: 50px;
+            color: #f9d342;
+        }
+
+        /* Blog Section */
+        .blog-section {
+            padding: 50px 0;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        .card-body {
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .animated-message {
+            font-size: 1.2rem;
+            /* Increase font size */
+            font-weight: bold;
+            /* Bold text */
+            text-align: center;
+            /* Center the text */
+            animation: fadeIn 1s ease-in-out;
+            /* Fade-in effect */
+            margin-top: 10px;
+            /* Margin for spacing */
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Additional styles for loading and result messages */
+        #loadingMessage {
+            color: orange;
+            /* Color for loading message */
+            animation: pulse 1.5s infinite;
+            /* Pulsing effect */
+        }
+
+        #resultMessage {
+            color: green;
+            /* Color for result message */
+            animation: zoomIn 0.5s ease-in;
+            /* Zoom-in effect */
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes zoomIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Disease Detection</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#blogs">Blogs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About Us</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Main Section -->
+    <div class="main-section">
+        <h1>Disease Detection via MRI, CT, and X-Ray</h1>
+        <div class="card-container d-flex justify-content-center">
+            <!-- MRI Card -->
+            <div class="card m-3" style="width: 22rem;">
+                <img src="https://premierimaging.org/wp-content/uploads/2022/01/mri-magnetic-resonance-imaging-scan-device-mri-2021-09-02-07-55-40-utc-scaled.jpg"
+                    class="card-img-top" alt="MRI Scan">
+                <div class="card-body text-center">
+                    <h5 class="card-title">MRI Scan</h5>
+                    <p class="card-text">Identify diseases:
+                    <ul>
+                        <li>Brain Tumors</li>
+                    </ul>
+                    </p>
+                    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal"
+                        data-scan="MRI">Upload MRI</a>
+                </div>
+            </div>
+
+            <!-- X-Ray Card -->
+            <div class="card m-3" style="width: 22rem;">
+                <img src="https://t4.ftcdn.net/jpg/01/30/56/63/360_F_130566327_mxhbevN5vaTmE1NYIdhxlVXkFTCUmNBO.jpg"
+                    class="card-img-top" alt="X-Ray Scan">
+                <div class="card-body text-center">
+                    <h5 class="card-title">X-Ray Scan</h5>
+                    <p class="card-text">Identify diseases:
+                    <ul>
+                        <li>Pneumonia</li>
+                    </ul>
+                    </p>
+                    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal"
+                        data-scan="X-Ray">Upload X-Ray</a>
+                </div>
+            </div>
+
+            <!-- CT Scan Card -->
+            <div class="card m-3" style="width: 22rem;">
+                <img src="https://ssl.adam.com/graphics/images/en/23269.jpg" class="card-img-top" alt="CT Scan">
+                <div class="card-body text-center">
+                    <h5 class="card-title">CT Scan</h5>
+                    <p class="card-text">Identify diseases:
+                    <ul>
+                        <li>Lung Cancer</li>
+                    </ul>
+                    </p>
+                    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal"
+                        data-scan="CT">Upload CT Scan</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Upload -->
+    <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadModalLabel">Upload Image</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="uploadForm">
+                        <div class="mb-3">
+                            <label for="imageUpload" class="form-label">Select Image</label>
+                            <input type="file" class="form-control" id="imageUpload" accept="image/*" required>
+                        </div>
+                        <div class="mb-3">
+                            <img id="imagePreview" src="#" alt="Image Preview"
+                                style="display:none; max-width: 100%; height: auto;">
+                        </div>
+                        <div class="mb-3" style="color: black;">
+                            <p id="loadingMessage" class="animated-message" style="display:none;">Analyzing...</p>
+                            <p id="resultMessage" class="animated-message" style="display:none;"></p>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        // CSRF token fetch
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+        // JavaScript for uploading and preview
+        let scanType = '';
+
+        document.querySelectorAll('[data-bs-toggle="modal"]').forEach(button => {
+            button.addEventListener('click', function () {
+                scanType = this.getAttribute('data-scan'); // Set scanType to MRI, X-Ray, or CT
+                document.getElementById('uploadModalLabel').innerText = `Upload ${scanType} Image`;
+            });
+        });
+
+        // Clear modal content when closed
+        document.getElementById('uploadModal').addEventListener('hidden.bs.modal', function () {
+            document.getElementById('uploadForm').reset(); // Reset the form
+            document.getElementById('imagePreview').style.display = 'none'; // Hide the image preview
+            document.getElementById('imagePreview').src = ''; // Reset the image source
+            document.getElementById('resultMessage').style.display = 'none'; // Hide result message
+            document.getElementById('loadingMessage').style.display = 'none'; // Hide loading message
+        });
+
+        // Image preview when file is selected
+        document.getElementById('imageUpload').addEventListener('change', function (event) {
+            const [file] = event.target.files;
+            if (file) {
+                document.getElementById('imagePreview').style.display = 'block';
+                document.getElementById('imagePreview').src = URL.createObjectURL(file);
+            }
+        });
+
+        // Handling form submission
+        document.getElementById('uploadForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const formData = new FormData();
+            const imageFile = document.getElementById('imageUpload').files[0];
+            formData.append('image', imageFile);
+
+            // Set the upload URL based on scan type
+            let uploadUrl = '';
+            if (scanType === 'MRI') {
+                uploadUrl = '/upload-mri/';
+            } else if (scanType === 'X-Ray') {
+                uploadUrl = '/upload-xray/';
+            } else if (scanType === 'CT') {
+                uploadUrl = '/upload-ct/';
+            }
+
+            // Show loading message
+            document.getElementById('loadingMessage').style.display = 'block';
+            document.getElementById('resultMessage').style.display = 'none'; // Hide previous results if any
+
+            fetch(uploadUrl, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': csrftoken // Include the CSRF token here
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('loadingMessage').style.display = 'none'; // Hide loading message
+
+                    // Show the result
+                    if (data.result) {
+                        document.getElementById('resultMessage').innerText = `Analysis Result: ${data.result}`;
+                    } else {
+                        document.getElementById('resultMessage').innerText = `Error: ${data.error}`;
+                    }
+                    document.getElementById('resultMessage').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error uploading image:', error);
+                    document.getElementById('loadingMessage').style.display = 'none'; // Hide loading message
+                    document.getElementById('resultMessage').innerText = 'An error occurred while processing the image.';
+                    document.getElementById('resultMessage').style.display = 'block';
+                });
+        });
+    </script>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section text-center text-white">
+        <div class="container">
+            <h2>Key Features</h2>
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <i class="feature-icon fas fa-shield-alt"></i>
+                    <h5>Advanced AI Algorithms</h5>
+                    <p>Our system uses cutting-edge AI models to accurately detect diseases.</p>
+                </div>
+                <div class="col-md-4">
+                    <i class="feature-icon fas fa-laptop-medical"></i>
+                    <h5>User-Friendly Interface</h5>
+                    <p>Simple interface for uploading scans and getting quick results.</p>
+                </div>
+                <div class="col-md-4">
+                    <i class="feature-icon fas fa-bolt"></i>
+                    <h5>Fast Results</h5>
+                    <p>Receive results in seconds using advanced technology.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blogs Section -->
+    <section id="blogs" class="blog-section">
+        <div class="container">
+            <h2 class="text-center">Our Latest Blogs</h2>
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">The Future of AI in Medical Imaging</h5>
+                            <img src="https://www.postdicom.com/images/blog-posts/Future%20of%20AI%20in%20Medical%20Imaging%20-%20Presented%20by%20PostDICOM.jpg"
+                                class="card-img-top" alt="blog-1">
+                            <p>Discover how AI is transforming medical diagnostics for the better.</p>
+                            <a href="https://www.postdicom.com/en/blog/future-of-ai-in-medical-imaging" target="_blank"
+                                class="btn btn-primary">Read More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">MRI and CT Scans in Disease Detection</h5>
+                            <img src="https://www.mskcc.org/sites/default/files/styles/width_1000/public/node/175711/3x2/050418_msk-01047-1200x800.webp"
+                                class="card-img-top" alt="blog-2">
+                            <p>Learn when and why each scan type is used in diagnostics.</p>
+                            <a href="https://www.mskcc.org/news/ct-vs-mri-what-s-difference-and-how-do-doctors-choose-which-imaging-method-use"
+                                target="_blank" class="btn btn-primary">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about" class="about-section text-center text-white py-5" style="background-color: rgba(0, 0, 0, 0.7);">
+        <div class="container">
+            <h2>About Us</h2>
+            <p class="lead mt-3">
+                Welcome to the future of medical diagnostics! Our Disease Detection System leverages cutting-edge
+                artificial intelligence and deep learning algorithms to provide fast, accurate, and reliable analysis of
+                MRI, CT, and X-ray scans.
+            </p>
+            <p class="mt-4">
+                Whether you're a healthcare professional seeking assistance in diagnosis or a patient looking for a
+                second opinion, our platform offers an easy-to-use interface to upload medical images and receive
+                instant results. Our goal is to democratize access to AI-driven medical diagnostics and empower medical
+                professionals with advanced tools to improve patient care.
+            </p>
+            <p class="mt-4">
+                At the core of our system are state-of-the-art models trained on vast datasets, ensuring precision and
+                speed in identifying potential diseases. Our mission is to transform healthcare by combining innovation
+                with accessibility, offering a system that can be trusted by hospitals, clinics, and individuals around
+                the globe.
+            </p>
+            <p class="mt-4">
+                With our technology, we aim to reduce the time and costs associated with traditional diagnostics,
+                helping to streamline workflows and improve patient outcomes. Our team of developers, engineers, and
+                healthcare experts is dedicated to pushing the boundaries of what’s possible in AI-based medical
+                imaging.
+            </p>
+            <p class="mt-4">
+                Join us on this journey to revolutionize medical diagnostics and bring cutting-edge technology to the
+                forefront of healthcare.
+            </p>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer>
+        <h2>Our Team</h2>
+        <div class="team-members">
+            <div class="team-member">
+                <img src="https://media.licdn.com/dms/image/v2/D4D03AQGNNwa8LPAo-g/profile-displayphoto-shrink_100_100/profile-displayphoto-shrink_100_100/0/1727882710471?e=1733961600&v=beta&t=115D6VO0aLa1DuGyphTTgYcKTBvHpJCWSoex60gIvhU"
+                    alt="Team Member 1">
+                <h4>Karan Jain</h4>
+                <a href="https://www.linkedin.com/in/karan-jain-161b60267/" target="_blank">LinkedIn</a>
+                <a href="https://github.com/member1" target="_blank">GitHub</a>
+            </div>
+            <div class="team-member">
+                <img src="https://media.licdn.com/dms/image/v2/D4D03AQEslP-SVEP6Qg/profile-displayphoto-shrink_100_100/profile-displayphoto-shrink_100_100/0/1719377811857?e=1733356800&v=beta&t=euA5h2hcLSOk74s97jFPv3jl4edl6R0gb7S4vFd_8Ns"
+                    alt="Team Member 2">
+                <h4>Prakruti Bhavsar</h4>
+                <a href="https://www.linkedin.com/in/prakruti-bhavsar-516199289/" target="_blank">LinkedIn</a>
+                <a href="https://github.com/member2" target="_blank">GitHub</a>
+            </div>
+            <div class="team-member">
+                <img src="team-member3.jpg" alt="Team Member 3">
+                <h4>Tanaya Kulkarni</h4>
+                <a href="https://www.linkedin.com/in/member3" target="_blank">LinkedIn</a>
+                <a href="https://github.com/member3" target="_blank">GitHub</a>
+            </div>
+            <div class="team-member">
+                <img src="https://media.licdn.com/dms/image/v2/D4D03AQG3gTDDthVcNg/profile-displayphoto-shrink_100_100/profile-displayphoto-shrink_100_100/0/1719856818525?e=1733356800&v=beta&t=hPYII3B8baYlNWk_64tnuWYhFLwEgJZj6gPMCqVoKQg"
+                    alt="Team Member 4">
+                <h4>Payal Gupta</h4>
+                <a href="https://www.linkedin.com/in/payal-gupta-30bb57252/" target="_blank">LinkedIn</a>
+                <a href="https://github.com/member4" target="_blank">GitHub</a>
+            </div>
+        </div>
+        <p>&copy; 2024 Disease Detection System. All Rights Reserved.</p>
+    </footer>
+
+    <style>
+        .team-members {
+            display: flex;
+            /* Arrange members horizontally */
+            justify-content: space-between;
+            /* Distribute evenly */
+            padding: 100px;
+            /* Add padding for spacing from corners */
+        }
+
+        .team-member {
+            text-align: center;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
